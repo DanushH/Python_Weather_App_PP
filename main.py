@@ -8,9 +8,9 @@ def get_weather(location):
     url = f'https://www.google.com/search?q=weather+{location.replace(" ","")}'
     session = requests.Session()
     session.headers['User-Agent'] = USER_AGENT
-    html = session.get(url)
     
     try:
+        html = session.get(url)
         soup = bs(html.text, "html.parser")        
         loc = soup.find("span", attrs={'class': 'BBwThe'}).text
         time = soup.find("div", attrs={'id': 'wob_dts'}).text
@@ -20,6 +20,14 @@ def get_weather(location):
 
     except:
         return None, None, None, None  
+
+
+def clear():
+    window["-INPUT-"].update("")
+    window["-LOC-"].update(visible=False)
+    window["-TEMP-"].update(visible=False)
+    window["-WEATHER-"].update(visible=False)
+    window["-TIME-"].update(visible=False)
 
 
 sg.theme("DarkBlack")
@@ -87,6 +95,7 @@ while True:
 
     if event == "-SEARCH-":
         loc, time, weather, temp = get_weather(values["-INPUT-"])
+
         if loc != None and time != None and weather != None and temp != None:
             temp = f"{temp} °C"
             window["-LOC-"].update(loc, visible=True)
@@ -94,16 +103,9 @@ while True:
             window["-WEATHER-"].update(weather, visible=True)
             window["-TIME-"].update(time, visible=True)
         else:
-            window["-LOC-"].update("Incorrect Location", visible=True)
-            window["-TEMP-"].update(visible=False)
-            window["-WEATHER-"].update(visible=False)
-            window["-TIME-"].update(visible=False)
-    
+            clear()
+
     if event == "-CLEAR-":
-        window["-INPUT-"].update("")
-        window["-LOC-"].update(visible=False)
-        window["-TEMP-"].update(visible=False)
-        window["-WEATHER-"].update(visible=False)
-        window["-TIME-"].update(visible=False)
+        clear()
         
 window.close()
